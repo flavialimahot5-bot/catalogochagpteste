@@ -1,5 +1,12 @@
 import type { Product } from './catalog';
 
+export function creativeOfferUrl(link:string) {
+ const url=new URL(link);
+ if(!['http:','https:'].includes(url.protocol)||url.username||url.password)throw new Error('Informe uma URL de oferta http ou https sem credenciais.');
+ url.pathname=`${url.pathname.replace(/\/+$/,'')}/ctv-${crypto.randomUUID().replaceAll('-','')}`;
+ return url.toString();
+}
+
 export function inferProductType(text:string) {
  const value=text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
  if(/panela|cozinha|frigideira|cookware|kitchen/.test(value))return 'Casa e jardim > Cozinha e sala de jantar > Utensílios de cozinha';

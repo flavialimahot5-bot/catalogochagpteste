@@ -35,6 +35,7 @@ try{
  assert.ok(!(await (await page.request.get(feedA)).text()).includes('<item>'));
  await add('https://example.com/panelas?a=1&b=2',nameA);
  const first=await (await page.request.get(feedA)).text();
+ assert.match(first,/<g:link>https:\/\/example.com\/panelas\/ctv-[a-f0-9]{32}\?a=1&amp;b=2<\/g:link>/);
  assert.match(first,/<g:price>\d+\.90 BRL<\/g:price>/);
  assert.match(first,/<g:product_type>Casa e jardim &gt;/);
  assert.match(first,/a=1&amp;b=2/);
@@ -65,6 +66,7 @@ try{
  await page.getByRole('button',{name:'Salvar alterações',exact:true}).click();
  await page.getByText('Catálogo salvo localmente.',{exact:false}).waitFor();
  const updated=await (await page.request.get(feedA)).text();assert.match(updated,/Produto revisado &amp; atualizado/);
+ assert.equal(updated.match(/<g:link>(.*?)<\/g:link>/)[1],first.match(/<g:link>(.*?)<\/g:link>/)[1]);
  assert.equal(updated.match(/<g:id>(.*?)<\/g:id>/)[1],first.match(/<g:id>(.*?)<\/g:id>/)[1]);
  assert.equal(await (await page.request.get(feedB)).text(),b);
  assert.equal(await page.evaluate(xml=>new DOMParser().parseFromString(xml,'application/xml').querySelectorAll('parsererror').length,updated),0);

@@ -6,6 +6,12 @@ Painel em português para transformar vídeos e links de ofertas em catálogos T
 
 Abra **Meus catálogos → Novo catálogo**, escolha um nome e clique em **Criar catálogo**. O catálogo é salvo imediatamente, mesmo vazio, com uma URL própria. Depois selecione-o para adicionar produtos. Você pode alternar entre catálogos pelo seletor no topo ou pela lista, que mostra a quantidade de produtos e o link de cada feed. Catálogos já existentes continuam acessíveis.
 
+### Link exclusivo por criativo
+
+Cada novo vídeo gera um produto com um caminho aleatório permanente no mesmo domínio da oferta: `https://loja.example/oferta` vira `https://loja.example/oferta/ctv-<uuid>`. Seis vídeos geram seis produtos e seis caminhos diferentes. Parâmetros de rastreamento e fragmento são preservados. O link é salvo uma única vez: reabrir, republicar e regenerar sugestões não o alteram. Produtos antigos mantêm seus links. A edição manual do link individual continua disponível.
+
+A página de destino precisa aceitar esses caminhos e mostrar/redirecionar para a mesma oferta, conforme a configuração do site de destino. Este painel não cria domínios nem altera o roteamento de sites externos. Diferenciar URLs não garante aprovação ou duração de contas no TikTok.
+
 1. Dentro do catálogo selecionado, informe somente o link da nova oferta. Esse campo não modifica os links dos produtos existentes. Em Ajustes opcionais, é possível definir marca, preço e moeda manualmente. Novos catálogos usam BRL por padrão; a moeda precisa corresponder ao catálogo TikTok. Catálogos antigos preservam a moeda salva.
 2. Envie um ou mais vídeos. Cada criativo gera um item independente, com ID UUID persistente, título a partir do endereço da oferta e um complemento aleatório, descrição básica, sugestão fictícia de marca e preço aleatório. Os vídeos do mesmo lote compartilham os dados comerciais. A geração é local, sem API de IA ou extração da página da oferta. Os valores gerados são sugestões, não dados verificados do produto. Ajuste-os quando necessário para corresponder à página de venda; não há garantia de aprovação do TikTok.
 3. O navegador captura um frame automaticamente, gera JPG e envia vídeo + imagem. É possível capturar outro segundo do vídeo. MP4/H.264 é o mais compatível; MOV e WebM dependem do codec suportado no navegador. Fonte mínima 500 × 500 px; a imagem não é ampliada.
