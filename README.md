@@ -28,6 +28,16 @@ Abra http://127.0.0.1:3000. Sem token Blob e fora da Vercel, os arquivos ficam e
 4. Faça novo deploy. Entre no painel com a chave definida. Ela fica apenas no sessionStorage desta aba e é enviada via HTTPS para autorizar operações de escrita/leitura administrativa. Este é um painel de operador único; não é um SaaS multiusuário.
 5. Envie vídeos e publique o catálogo. A URL pública do XML é servida diretamente pelo Blob. Mídias e feeds devem permanecer acessíveis sem login para o TikTok.
 
+### Atualizações automáticas pelo GitHub
+
+Repositório: https://github.com/flavialimahot5-bot/catalogochagpteste — branch de produção: `main`.
+
+Na Vercel, importe esse repositório e mantenha `main` como Production Branch. Com a integração GitHub conectada e os deployments habilitados, cada novo push nessa branch dispara um build e deploy de produção. Não é necessário criar GitHub Actions ou configurar um Deploy Hook.
+
+Defina `BLOB_READ_WRITE_TOKEN` e `ADMIN_SECRET` em Production antes do primeiro deploy funcional. Mudanças locais só chegam à Vercel depois de commit e push para o GitHub. Se a Vercel exigir associação do autor à equipe, conecte a conta GitHub `flavialimahot5-bot` à conta Vercel proprietária do projeto.
+
+Referência: [Integração oficial Vercel + GitHub](https://vercel.com/docs/git/vercel-for-github).
+
 Os uploads em produção são diretos do navegador ao Blob, em multipart, com autorização do servidor (máximo definido pelo app: 500 MB por vídeo, 100 itens por catálogo). Não passam pelo limite de corpo das funções Vercel. Somente formatos de mídia permitidos podem receber tokens; o namespace dos uploads não permite sobrescrever feeds ou catálogos.
 
 Vídeos, frames, XML e os registros JSON dos catálogos ficam públicos em caminhos com UUID. Não inclua dados privados. Apagar um item do catálogo não apaga o arquivo original do Blob; arquivos órfãos/frames substituídos podem ser removidos pelo painel Storage quando não forem mais referenciados. Custos de armazenamento e transferência seguem sua conta Vercel. Edição concorrente do mesmo catálogo usa a última publicação concluída; recomendado um único operador/aba por catálogo.
