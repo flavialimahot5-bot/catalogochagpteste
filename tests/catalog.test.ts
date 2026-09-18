@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildXml, catalogSchema, type Catalog } from '../lib/catalog';
+import { buildXml, buildCsv, CSV_COLUMNS, catalogSchema, type Catalog } from '../lib/catalog';
 import { authorize, AuthError } from '../lib/auth';
 import { generateDefaults, inferProductType } from '../lib/generate';
 test('empty named catalogs have valid feeds and can be cleared',()=>{
@@ -24,3 +24,17 @@ const fixture:Catalog={id:'79fa7e0c-0864-4f43-9c7f-4b0d2276a8d4',name:'Catálogo
 test('RSS escapes data, keeps video/image and formats currency',()=>{const xml=buildXml(fixture);assert.match(xml,/<g:title>Café &amp; chá &lt;especial&gt;<\/g:title>/);assert.match(xml,/<g:price>19.90 BRL<\/g:price>/);assert.match(xml,/<g:video_link>https:\/\/example.com\/video.mp4<\/g:video_link>/);assert.match(xml,/<g:image_link>https:\/\/example.com\/frame.jpg<\/g:image_link>/);assert.ok(!xml.includes('\u0001'));});
 test('cannot publish invalid prices, missing brand, unsafe URLs or duplicate IDs',()=>{for(const patch of [{price:'-1'},{price:'0'},{price:'NaN'},{brand:''},{link:'javascript:alert(1)'},{image_link:'data:image/png,abc'}])assert.equal(catalogSchema.safeParse({...fixture,products:[{...fixture.products[0],...patch}]}).success,false);assert.throws(()=>buildXml({...fixture,products:[fixture.products[0],fixture.products[0]]}),/ID único/);});
 test('cloud administration rejects missing or incorrect credentials',()=>{const old=process.env.ADMIN_SECRET;try{process.env.ADMIN_SECRET='a'.repeat(32);assert.throws(()=>authorize(new Request('https://example.com')),AuthError);assert.throws(()=>authorize(new Request('https://example.com',{headers:{Authorization:'Bearer wrong'}})),AuthError);assert.doesNotThrow(()=>authorize(new Request('https://example.com',{headers:{Authorization:`Bearer ${'a'.repeat(32)}`}})));}finally{if(old===undefined)delete process.env.ADMIN_SECRET;else process.env.ADMIN_SECRET=old;}});
+
+test('CSV matches 44 template columns, preserves SKUs and escapes commas, quotes and newlines',()=>{
+ assert.equal(CSV_COLUMNS.length,44);
+ assert.equal(CSV_COLUMNS[0],'sku_id');
+ const product={...fixture.products[0],title:'Café, "especial"',description:'Primeira linha\nSegunda linha'};
+ const csv=buildCsv({...fixture,products:[product]});
+ assert.ok(csv.startsWith(CSV_COLUMNS.join(',')+'\r\n'));
+ assert.ok(csv.includes('item_1,"Café, ""especial""","Primeira linha\nSegunda linha",in stock,new,19.90 BRL,'));
+ assert.ok(csv.includes(product.video_link));
+ assert.ok(csv.endsWith(','.repeat(25)+'\r\n'));
+ assert.equal(buildCsv({...fixture,products:[]}),CSV_COLUMNS.join(',')+'\r\n');
+ assert.throws(()=>buildCsv({...fixture,products:[product,product]}),/ID único/);
+ assert.throws(()=>buildCsv({...fixture,products:[product,{...product,id:'other',currency:'USD'}]}),/mesma moeda/);
+});

@@ -21,7 +21,7 @@ try{
  assert.equal(await(await page.request.get(catalog.feedUrl)).text(),xml);
  await page.locator('.draft-row').first().click();assert.equal(await editor.getByLabel('Nome do produto',{exact:true}).inputValue(),'Variante revisada');
  await editor.getByRole('checkbox').check();await editor.getByRole('button',{name:'Adicionar ao feed',exact:true}).click();await editor.waitFor({state:'hidden'});
- const updated=await(await page.request.get(catalog.feedUrl)).text();assert.equal((updated.match(/<item>/g)||[]).length,7);assert.match(updated,/Variante revisada/);
+ const updated=await(await page.request.get(catalog.feedUrl)).text();assert.equal(updated.trimEnd().split('\r\n').length,8);assert.match(updated,/Variante revisada/);
  const summary=await(await page.request.get(origin+`/api/drafts?catalogId=${id}`)).json();assert.equal(summary.total,5999);assert.equal(summary.originalCount,6);
  await page.reload();await page.locator('.catalog-open').filter({hasText:name}).click();await page.getByRole('button',{name:'Ver rascunhos',exact:true}).click();await page.locator('.draft-row').first().waitFor();
  assert.equal(await page.locator('.draft-row').count(),25);await page.screenshot({path:'test-results/duplicates-desktop.png',fullPage:true});

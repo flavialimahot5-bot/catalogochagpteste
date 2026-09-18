@@ -13,14 +13,17 @@ try{
  await publish.click();await page.getByText('7.000 produtos publicados. Todos estão no catálogo e no feed.',{exact:true}).waitFor({timeout:60000});
  assert.equal(await publish.isDisabled(),true);
  const rows=await(await page.request.get(origin+'/api/catalogs')).json();const saved=rows.find(c=>c.id===id);assert.equal(saved.products.length,7007);assert.deepEqual(saved.products.slice(0,7),products);
- const xml=await(await page.request.get(catalog.feedUrl)).text();assert.equal((xml.match(/<item>/g)||[]).length,7007);
+ assert.ok(catalog.feedUrl.endsWith('.csv'));
+ const feed=await page.request.get(catalog.feedUrl);assert.match(feed.headers()['content-type'],/text\/csv/);
+ const csv=await feed.text();assert.equal(csv.trimEnd().split('\r\n').length,7008);assert.equal(csv.split('\r\n')[0].split(',').length,44);
+ const xml=await(await page.request.get(catalog.feedUrl.replace('.csv','.xml'))).text();assert.equal((xml.match(/<item>/g)||[]).length,7007);
  assert.equal((await(await page.request.get(origin+`/api/drafts?catalogId=${id}`)).json()).total,0);
  assert.equal(await page.locator('.video-select').count(),25);
  const retry=await page.request.put(origin+'/api/drafts',{data:{catalogId:id}});assert.equal(retry.status(),200);assert.equal((await retry.json()).total,7007);
  await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await page.screenshot({path:'test-results/publish-all-mobile.png',fullPage:true});
- assert.deepEqual(errors,[]);console.log('PASS: 7000 drafts published through button, originals preserved, 7007 XML items, drafts cleared, retry safe, 25 visible products, mobile layout.');
+ assert.deepEqual(errors,[]);console.log('PASS: 7000 drafts published through button, originals preserved, 7007 CSV rows and legacy XML items, drafts cleared, retry safe, 25 visible products, mobile layout.');
 }finally{
  await browser.close();
- for(const file of [`catalogs/${id}.json`,`feeds/${id}.xml`,`drafts/${id}.json`])await unlink(new URL(`../.local-data/${file}`,import.meta.url)).catch(()=>{});
+ for(const file of [`catalogs/${id}.json`,`feeds/${id}.xml`,`feeds/${id}.csv`,`drafts/${id}.json`])await unlink(new URL(`../.local-data/${file}`,import.meta.url)).catch(()=>{});
 }

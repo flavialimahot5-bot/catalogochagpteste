@@ -1,6 +1,6 @@
 # FeedStudio
 
-Painel em português para transformar vídeos e links de ofertas em catálogos TikTok XML (RSS), seguindo o template fornecido. Next.js + Vercel Blob, sem banco de dados adicional.
+Painel em português para transformar vídeos e links de ofertas em catálogos TikTok CSV, seguindo o template fornecido. Next.js + Vercel Blob, sem banco de dados adicional.
 
 ## Fluxo
 
@@ -16,12 +16,12 @@ A página de destino precisa aceitar esses caminhos e mostrar/redirecionar para 
 2. Envie um ou mais vídeos. Cada criativo gera um item independente, com ID UUID persistente, título a partir do endereço da oferta e um complemento aleatório, descrição básica, sugestão fictícia de marca e preço aleatório. Os vídeos do mesmo lote compartilham os dados comerciais. A geração é local, sem API de IA ou extração da página da oferta. Os valores gerados são sugestões, não dados verificados do produto. Ajuste-os quando necessário para corresponder à página de venda; não há garantia de aprovação do TikTok.
 3. O navegador captura um frame automaticamente, gera JPG e envia vídeo + imagem. É possível capturar outro segundo do vídeo. MP4/H.264 é o mais compatível; MOV e WebM dependem do codec suportado no navegador. Fonte mínima 500 × 500 px; a imagem não é ampliada.
 4. Os dados ficam disponíveis em Ajustar dados do criativo. O frame precisa representar adequadamente o produto; a captura não reconhece o conteúdo da cena. Não há checkbox obrigatório para publicar.
-5. Ao terminar o upload, os novos produtos são salvos automaticamente no catálogo selecionado e seu feed é atualizado. Cole a URL em **Data Feed URL** no TikTok. Também é possível baixar o XML. Se ocorrer falha ao salvar depois do upload, os itens continuam na tela para tentar novamente com **Salvar alterações**.
+5. Ao terminar o upload, os novos produtos são salvos automaticamente no catálogo selecionado e seu feed é atualizado. Cole a URL em **Data Feed URL** no TikTok. Também é possível baixar o CSV. Se ocorrer falha ao salvar depois do upload, os itens continuam na tela para tentar novamente com **Salvar alterações**.
 6. Em **Meus catálogos**, reabra e edite. Clique em **Salvar alterações** após editar produtos, renomear o catálogo, trocar frames ou remover itens, mantendo a mesma URL e os IDs dos itens existentes. Um catálogo também pode ser salvo vazio após remover seu último produto. Alterações podem levar pelo menos 60 segundos para refletir no cache do Blob, além da frequência de leitura do TikTok.
 
 Para corrigir um catálogo existente em ARS que deveria usar BRL: abra **Meus catálogos → catálogo → Ajustes do catálogo → Moeda do catálogo TikTok → BRL** e publique novamente. Essa seleção aplica a moeda a todos os itens, sem converter numericamente os preços. O botão Regenerar sugestões gera novos textos, marca e preço, preservando IDs e links das mídias; apenas abrir ou republicar não regenera os dados.
 
-O XML também inclui `product_type`, sugerido por palavras no link/título (por exemplo, panelas → utensílios de cozinha). Quando não há informação suficiente, usa `Produtos > Outros`; a sugestão é editável e não é classificação por IA. Catálogos antigos recebem esse campo ao serem republicados, mesmo sem reenviar os vídeos. O campo livre `product_type` atende à alternativa indicada pelo TikTok; não são inventados IDs da taxonomia Google.
+O CSV também inclui `product_type`, sugerido por palavras no link/título (por exemplo, panelas → utensílios de cozinha). Quando não há informação suficiente, usa `Produtos > Outros`; a sugestão é editável e não é classificação por IA. Catálogos antigos recebem esse campo ao serem republicados, mesmo sem reenviar os vídeos. O campo livre `product_type` atende à alternativa indicada pelo TikTok; não são inventados IDs da taxonomia Google.
 
 ## Rodar localmente
 
@@ -70,10 +70,16 @@ npm run typecheck
 npm run build
 ```
 
-O XML inclui todos os campos obrigatórios do template e `g:video_link`. Campos opcionais sem informação são omitidos; não são inventados GTIN, dimensões comerciais, frete ou identificadores de app.
+O CSV inclui as 44 colunas do template, com `sku_id` e `video_link`. Campos opcionais sem informação ficam vazios; não são inventados GTIN, dimensões comerciais, frete ou identificadores de app.
 
 Referências: [Upload direto do Vercel Blob](https://vercel.com/docs/vercel-blob/client-upload), [SDK Blob](https://vercel.com/docs/vercel-blob/using-blob-sdk).
 
 ### Publicar todos os rascunhos
 
-Em **Cópias para edição**, clique em **Publicar todos** para adicionar todos os rascunhos ao catálogo e atualizar o mesmo feed XML. Os produtos já publicados são preservados. Após salvar o feed e o catálogo, os rascunhos publicados saem da lista. O limite do catálogo é de 10.100 produtos; a lista mostra 25 por página. Salve alterações pendentes antes de publicar as cópias.
+Em **Cópias para edição**, clique em **Publicar todos** para adicionar todos os rascunhos ao catálogo e atualizar o mesmo feed CSV. Os produtos já publicados são preservados. Após salvar o feed e o catálogo, os rascunhos publicados saem da lista. O limite do catálogo é de 10.100 produtos; a lista mostra 25 por página. Salve alterações pendentes antes de publicar as cópias.
+
+### Formato CSV do modelo TikTok
+
+A publicação normal, a publicação individual de rascunhos e **Publicar todos** geram CSV UTF-8 com as 44 colunas na ordem do modelo fornecido. O ID existente vira `sku_id`, o preço inclui a moeda (por exemplo, `19.90 BRL`) e os links de imagem e vídeo são preservados. Campos opcionais sem dados ficam vazios. O arquivo contém apenas cabeçalho e produtos, sem exemplos ou instruções do modelo.
+
+Para catálogos antigos, clique em **Atualizar catálogo** e copie a nova URL terminada em `.csv` para **URL do feed** no TikTok. Os arquivos XML antigos continuam atualizados para integrações existentes. **Baixar CSV** exporta os produtos exibidos no catálogo, incluindo alterações locais ainda não salvas.
