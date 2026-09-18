@@ -9,7 +9,8 @@ test('category is inferred for old feeds and custom categories are XML escaped',
  assert.match(buildXml({...fixture,products:[{...fixture.products[0],product_type:'Casa & Jardim > Panelas'}]}),/<g:product_type>Casa &amp; Jardim &gt; Panelas<\/g:product_type>/);
  assert.equal(inferProductType('xyz'), 'Produtos > Outros');
 });
-test('automatic data publishes ARS and preserves explicit currency selection',()=>{
+test('automatic data defaults to BRL and preserves explicit currency selection',()=>{
+ assert.equal(generateDefaults('https://example.com/panelas').currency,'BRL');
  for(const currency of ['ARS','BRL','USD','EUR'] as const){const generated=generateDefaults('https://example.com/jogo-panelas',currency);const data={...fixture,products:[{...fixture.products[0],...generated}]};assert.equal(catalogSchema.safeParse(data).success,true);assert.match(buildXml(data),new RegExp(`<g:price>\\d+\\.90 ${currency}</g:price>`));assert.ok(generated.title.includes('Jogo panelas'));}
  assert.throws(()=>generateDefaults('javascript:alert(1)'),/http/);
  assert.throws(()=>buildXml({...fixture,products:[fixture.products[0],{...fixture.products[0],id:'item_2',currency:'ARS'}]}),/mesma moeda/);

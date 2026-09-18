@@ -11,7 +11,7 @@ export function inferProductType(text:string) {
  return 'Produtos > Outros';
 }
 
-export function generateDefaults(link:string,currency:Product['currency']='ARS') {
+export function generateDefaults(link:string,currency:Product['currency']='BRL') {
  const url=new URL(link);
  if(!['http:','https:'].includes(url.protocol))throw new Error('Informe um link de oferta http ou https.');
  const seed=crypto.randomUUID();

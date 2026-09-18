@@ -32,7 +32,7 @@ try{
  const feedUrl=await page.getByLabel('Data Feed URL',{exact:true}).inputValue();
  const feed=await (await page.request.get(feedUrl)).text();
  assert.match(feed,/<g:image_link>http:\/\/(localhost|127.0.0.1):3000\/api\/local\/media\/.+\.jpg<\/g:image_link>/);
- assert.match(feed,/<g:price>\d+\.90 ARS<\/g:price>/);
+ assert.match(feed,/<g:price>\d+\.90 BRL<\/g:price>/);
  assert.match(feed,/a=1&amp;b=2/);
  const xmlErrors=await page.evaluate(xml=>new DOMParser().parseFromString(xml,'application/xml').querySelectorAll('parsererror').length,feed);assert.equal(xmlErrors,0);
  const imageUrl=feed.match(/<g:image_link>(.*?)<\/g:image_link>/)[1];assert.equal((await page.request.get(imageUrl)).status(),200);
