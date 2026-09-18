@@ -29,7 +29,7 @@ O XML também inclui `product_type`, sugerido por palavras no link/título (por 
 
 Dentro do catálogo, use **Cópias para edição → Duplicar**. A quantidade é por criativo original: 6 originais × 1.000 criam 6.000 rascunhos, além dos 6 produtos do catálogo. Os originais são contados por URL de vídeo; cópias já revisadas não são contadas novamente. Limites: 1.000 cópias por criativo em cada operação e 10.000 rascunhos armazenados por catálogo.
 
-Cada cópia ganha um ID e mantém marca, preço, link e mídias do original. Os vídeos não são reenviados. Os rascunhos são armazenados em JSON separado (`drafts/`) e não entram no RSS ao duplicar. A lista mostra 25 por página. Clique em um rascunho para editar e salvar; para inserir um produto no feed, confirme sua revisão individual e clique em **Adicionar ao feed**. O limite existente de 100 produtos publicados por catálogo permanece; os milhares de rascunhos ficam separados desse limite. Uma mesma tentativa de duplicação usa um identificador para evitar duplicatas em retries.
+Cada cópia ganha um ID e mantém marca, preço, link e mídias do original. Os vídeos não são reenviados. Os rascunhos são armazenados em JSON separado (`drafts/`) e não entram no RSS ao duplicar. A lista mostra 25 por página. Clique em um rascunho para editar e salvar; para inserir um produto no feed, confirme sua revisão individual e clique em **Adicionar ao feed**. Para publicar todas as cópias de uma vez, use **Publicar todos**. O catálogo comporta até 10.100 produtos publicados, incluindo os originais. Uma mesma tentativa de duplicação usa um identificador para evitar duplicatas em retries.
 
 Use uma aba/operador por catálogo durante alterações: armazenamento Blob não fornece transações entre arquivos, e alterações simultâneas não têm resolução automática de conflitos. Os rascunhos ficam fora do feed, mas seu JSON usa o mesmo armazenamento público do projeto; não inclua dados privados.
 
@@ -58,7 +58,7 @@ Defina `BLOB_READ_WRITE_TOKEN` e `ADMIN_SECRET` em Production antes do primeiro 
 
 Referência: [Integração oficial Vercel + GitHub](https://vercel.com/docs/git/vercel-for-github).
 
-Os uploads em produção são diretos do navegador ao Blob, em multipart, com autorização do servidor (máximo definido pelo app: 500 MB por vídeo, 100 itens por catálogo). Não passam pelo limite de corpo das funções Vercel. Somente formatos de mídia permitidos podem receber tokens; o namespace dos uploads não permite sobrescrever feeds ou catálogos.
+Os uploads em produção são diretos do navegador ao Blob, em multipart, com autorização do servidor (máximo definido pelo app: 500 MB por vídeo, 100 criativos originais e até 10.100 produtos publicados por catálogo). Não passam pelo limite de corpo das funções Vercel. Somente formatos de mídia permitidos podem receber tokens; o namespace dos uploads não permite sobrescrever feeds ou catálogos.
 
 Vídeos, frames, XML e os registros JSON dos catálogos ficam públicos em caminhos com UUID. Não inclua dados privados. Apagar um item do catálogo não apaga o arquivo original do Blob; arquivos órfãos/frames substituídos podem ser removidos pelo painel Storage quando não forem mais referenciados. Custos de armazenamento e transferência seguem sua conta Vercel. Edição concorrente do mesmo catálogo usa a última publicação concluída; recomendado um único operador/aba por catálogo.
 
@@ -73,3 +73,7 @@ npm run build
 O XML inclui todos os campos obrigatórios do template e `g:video_link`. Campos opcionais sem informação são omitidos; não são inventados GTIN, dimensões comerciais, frete ou identificadores de app.
 
 Referências: [Upload direto do Vercel Blob](https://vercel.com/docs/vercel-blob/client-upload), [SDK Blob](https://vercel.com/docs/vercel-blob/using-blob-sdk).
+
+### Publicar todos os rascunhos
+
+Em **Cópias para edição**, clique em **Publicar todos** para adicionar todos os rascunhos ao catálogo e atualizar o mesmo feed XML. Os produtos já publicados são preservados. Após salvar o feed e o catálogo, os rascunhos publicados saem da lista. O limite do catálogo é de 10.100 produtos; a lista mostra 25 por página. Salve alterações pendentes antes de publicar as cópias.

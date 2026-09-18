@@ -18,7 +18,8 @@ export const productSchema = z.object({
   product_type: z.string().trim().max(750).optional(),
   source_product_id: z.string().max(100).optional(),
 });
-export const catalogSchema = z.object({id:z.string().uuid(), name:z.string().trim().min(1).max(100), products:z.array(productSchema).max(100)});
+export const MAX_CATALOG_PRODUCTS = 10100;
+export const catalogSchema = z.object({id:z.string().uuid(), name:z.string().trim().min(1).max(100), products:z.array(productSchema).max(MAX_CATALOG_PRODUCTS)});
 export type Product = z.infer<typeof productSchema>;
 export type Catalog = z.infer<typeof catalogSchema> & {updatedAt?:string; feedUrl?:string};
 export function escapeXml(value: string) {
