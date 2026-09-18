@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+	<channel>
+		<item>
+			 <!-- #To learn more guidance about how to fill the attributes correctly, see morehttps://ads.tiktok.com/help/article?aid=10001006
+We highly recommend you provide sale price, shipping, which can help improve PVR according to the analysis and will be used as a selling point for attraction in ad format. For other attriutes like gender, age, fill in also if your have it, which can help us better recommend your products. -->
+			<!-- # Required || The unique ID difined by advertiser for each product || Rules：1.Character limit: 100; 2.Use valid unicode characters; 3.One catalog don't allow two identical sku. -->
+			<g:id>tiktok_item_1234</g:id>
+			<!-- Required || The name for each product || Rules: 1.Character limit: 500; 2.Use valid unicode characters; 3.Can match product title from your landing page. -->
+			<g:title>T-Shirt (Unisex)</g:title>
+			<!-- Required || Details to describe each product || Rules: 1.Character limit: 10,000; 2.Use valid unicode characters; 3.Should match product title from landing page; 4.Contents can't lead to shop, competitors, related accessories. -->
+			<g:description>A vibrant crewneck for all shapes and sizes. Made from 100% cotton.</g:description>
+			<!-- Required || The product's inventory status || Accepted values: In stock, Available, Preorder, Out of stock, or Discontinued -->
+			<g:availability>in stock</g:availability>
+			<!-- Required || The product's condition status || Accepted values: New, Refurbished, or Used-->
+			<g:condition>new</g:condition>
+			<!-- Required || The price of each product || Rules: 1.Currency much match the catalog's default currency; 2.Price & currency should match with the price from landing page and checkout page; 3.Should only be the price for one sku; 4.Example: 9.97 USD -->
+			<g:price>9.99 USD</g:price>
+			<!--#Required || A link to the product landing page || Rules: 1. Start with x://xxx.xxx/xxx?xxx=xxx, x can be any length or characters, like can started with http, https; 2. Make sure the verified domain name and can be opened successfully to avoid rejection.-->
+			<g:link>https://www.tiktok.com/tiktok_t_shirt</g:link>
+			<!-- #Required || A link to the product's image || 
+			Rules: 
+			1.Start with x://xxx.xxx/xxx?xxx=xxx with the verified domain name and make sure can be opened successfully, x can be any length or characters, like can started with http, https; 
+			2.Need link to the main image of your product (≥500*500 piexls), support image with JPG or PNG format; 
+			3.Do not scale up or upload thumbnail, do not upload placeholder or generic image, do not include watermarks or boards;  -->
+			<g:image_link>https://www.tiktok.com/t_shirt_image_001.jpg</g:image_link>
+			<!-- Optional || A link to the product's video || Start with x://xxx.xxx/xxx?xxx=xxx with the verified domain name and make sure can be opened successfully, x can be any length or characters, like can started with http, https. The URL for the video used in your ad for the video placement. Recommend Vertical(9:16); Recommend Resolution for TikTok: ≥720*1280; Recommend Bitrate for TikTok: ≥516kbps; Sound: Enabled with captions included -->
+			<g:video_link>https://www.tiktok.com/tiktok_t_shirt</g:video_link>
+			<!-- Required || The product's brand name || Character limit: 150; We strongly recommend you to provide a correct value instead of a meaningless one. -->
+			<g:brand>tiktok</g:brand>
+			<!-- Optional || Additional image links for the product || Rules: 1.No more than 10 images; 2.Use a comma to separate each link. -->
+			<g:additional_image_link>"https://www.tiktok.com/t_shirt_image_002.jpg,https://www.tiktok.com/t_shirt_image_003.jpg"</g:additional_image_link>
+			<!-- Optional || The age group that each product is for || Accepted values: Newborn, Infant, Toddler, Kids, Adult -->
+			<g:age_group>Adult</g:age_group>
+			<!-- Optional || The color of each product || Character limit: 100 -->
+			<g:color>blue</g:color>
+			<!-- Optional || The gender that each product is for || Accepted values: Male, Female, Unisex -->
+			<g:gender>unisex</g:gender>
+			<!-- Optional || The shared attribute that groups product variants have. Also known as the SPU. || Submit correct characters, it's a must for you if you have TikTok shop.  -->
+			<g:item_group_id>tiktok_1234_shirts</g:item_group_id>
+			<!-- Optional || A preset value from Google's product taxonomy || 1.Submit correct and full category of the product in google category if has. This can help improve your ad delivery performance; 2.Please refer to the Google website: https://support.google.com/merchants/answer/6324436?hl=en -->
+			<g:google_product_category>Apparel &amp; Accessories &gt; Clothing &gt; Shirts</g:google_product_category>
+			<!-- Optional || The composition of each product || Character limit: 200 -->
+			<g:material>cotton</g:material>
+			<!-- Optional || The pattern of each product || Character limit: 100 -->
+			<g:pattern>stripes1</g:pattern>
+			<!-- Optional || The category of each product || Rules: 1.Submit correct and full category of the product, such as Home > Women > Dresses > Maxi Dresses instead of just Dresses. This can help improve your ad delivery performance; 2.Better use or same with google category if u have it; 3.Only get first three level. -->
+			<g:product_type>Apparel &amp; Accessories &gt; Clothing &gt; Shirts</g:product_type>
+			<!-- Optional || The discounted price for each product || Rules: price & currency need match with the price from your landing page and checkout page; 2.Can only be the sale price for one sku, and make sure set correct sale price for discount ed products. -->
+			<g:sale_price>4.99 USD</g:sale_price>
+			<!-- Optional || The time period that the product will be on sale for || Rules：1. Submit the date with format like "2017-12-01 T0:00/2017-12-31 T0:00"; 2.Use together with sale price, if you has not use together, the sale price will always applies; 3.Start date need before the end date. -->
+			<g:sale_price_effective_date>2017-12-01 T0:00/2017-12-31 T0:00</g:sale_price_effective_date>
+			<!-- Optional || The shipping cost for each product || Recommend written as: COUNTRY:STATE:SHIPPING_TYPE:PRICE:SERVICE. Use ":" to separate different regions, use ";" to separate different shipping costs; Example: US:CA:Ground:9.99 USD:Standard -->
+			<g:shipping>
+						<g:country>US</g:country>
+						<g:state>CA</g:state>
+						<g:shipping_type>Ground</g:shipping_type>
+						<g:price>9.99 USD</g:price>
+						<g:service>Ground</g:service>
+			</g:shipping>
+			<!-- Optional || The shipping weight for each product || Rules: 1.Format: "number + unit" (whether there is a space in the middle or not), such as "0.00kg"; 2.The unit can be one of "LB", "Oz", "kg", "g". -->
+			<g:shipping_weight>0.3 lb</g:shipping_weight>
+			<!-- Optional || The global trade ID number -->
+			<g:gtin>3234567890126</g:gtin>
+			<!-- Optional || The manufacturer part number -->
+			<g:mpn>12433</g:mpn>
+			<!-- Optional || The size of each product -->
+			<g:size>small</g:size>
+			<!-- Optional || The cost of tax for each product -->
+			<g:tax>0.05</g:tax>
+			<!-- Optional || The URL of each iOS app || Submit correct iOS url and make sure can be opened successfully if you want to delivery iOS app -->
+			<applink property="ios_url" content="iOS://electronic"/>
+			<!-- Optional || The iOS app store ID || Rules: 1.Submit correct and effective ios app store id which can be searched; 2.App store id and the ios url should direct to the same app . -->
+			<applink property="ios_app_store_id" content="1234"/>
+			<!-- Optional || The name of each iOS app || Submit correct ios app name, matched the ios app store id and direct to the same app. -->
+			<applink property="ios_app_name" content="Electronic iOS"/>
+			<!-- Optional | The URL of each iPhone app -->
+			<applink property="iphone_url" content="iPhone://electronic"/>
+			<!-- Optional | The iPhone app store ID -->
+			<applink property="iphone_app_store_id" content="1234"/>
+			<!-- Optional | The name of each iPhone app -->
+			<applink property="iphone_app_name" content="Electronic iOS"/>
+			<!-- Optional | The URL of each iPad app -->
+			<applink property="ipad_url" content="iPad://electronic"/>
+			<!-- Optional | The iPad app store ID -->
+			<applink property="ipad_app_store_id" content="1234"/>
+			<!-- Optional | The name of each iPad app -->
+			<applink property="ipad_app_name" content="Electronic iOS"/>
+			<!-- Optional || The URL of each Android app || Submit correct ios url and make sure can be opened successfully if you want to delivery ios app -->
+			<applink property="android_url" content="android://electronic"/>
+			<!-- Optional || The Android app store ID || Rules: 1.Submit correct and effective andriod package which can be downloaded; 2.andriod package and the andriod url should direct to the same app. -->
+			<applink property="android_package" content="com.electronic"/>
+			<!-- Optional || The name of each Android app || Submit correct android app name, matched the android package and direct to the same app. -->
+			<applink property="android_app_name" content="Electronic Android"/>
+			<!-- Optional | A custom label for each product -->
+			<g:custom_label_0></g:custom_label_0>
+			<!-- Optional | A custom label for each product -->
+			<g:custom_label_1></g:custom_label_1>
+			<!-- Optional | A custom label for each product -->
+			<g:custom_label_2></g:custom_label_2>
+			<!-- Optional | A custom label for each product -->
+			<g:custom_label_3></g:custom_label_3>
+			<!-- Optional | A custom label for each product -->
+			<g:custom_label_4></g:custom_label_4>
+		</item>
+	</channel>
+</rss>

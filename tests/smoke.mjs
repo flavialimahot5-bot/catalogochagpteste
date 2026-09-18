@@ -1,0 +1,55 @@
+import { chromium } from '@playwright/test';
+import { mkdir, writeFile } from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1100}});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await mkdir('test-results',{recursive:true});
+try{
+ await page.goto('http://127.0.0.1:3000');
+ await page.getByRole('button',{name:'Arraste seus vídeos para cá'}).waitFor();
+ await page.screenshot({path:'test-results/desktop.png',fullPage:true});
+ // Generate a real decodable moving video; no external fixture or offer required.
+ const bytes=await page.evaluate(async()=>{
+  const canvas=document.createElement('canvas');canvas.width=720;canvas.height=1280;
+  const ctx=canvas.getContext('2d');const stream=canvas.captureStream(20);const recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8'});const chunks=[];
+  recorder.ondataavailable=e=>chunks.push(e.data);const done=new Promise(resolve=>recorder.onstop=async()=>resolve(Array.from(new Uint8Array(await new Blob(chunks).arrayBuffer()))));
+  recorder.start();let frame=0;const timer=setInterval(()=>{ctx.fillStyle='#19392d';ctx.fillRect(0,0,720,1280);ctx.fillStyle='#b7ef79';ctx.fillRect(80,100+frame*3,560,300);ctx.fillStyle='#fff';ctx.font='40px Arial';ctx.fillText('CRIATIVO DE TESTE',120,750);frame++;},50);
+  await new Promise(r=>setTimeout(r,2200));clearInterval(timer);recorder.stop();stream.getTracks().forEach(t=>t.stop());return done;
+ });
+ await writeFile('test-results/criativo.webm',Buffer.from(bytes));
+ await page.getByLabel('Nome do catálogo',{exact:true}).fill('Teste de integração');
+ await page.getByLabel('Link da oferta',{exact:false}).fill('https://example.com/oferta?a=1&b=2');
+ await page.getByLabel('Marca',{exact:true}).fill('Marca teste');
+ await page.getByRole('textbox',{name:'Preço *',exact:true}).fill('39.90');
+ await page.locator('input[type=file]').setInputFiles('test-results/criativo.webm');
+ await page.getByText('1 criativo(s) enviado(s), com imagem capturada e hospedada.',{exact:true}).waitFor({timeout:60000});
+ assert.equal(await page.locator('.video-row').count(),1);
+ assert.equal(await page.locator('.product-preview img').evaluate(img=>img.naturalWidth),720);
+ await page.getByLabel('Momento da imagem (segundos)').fill('1.5');
+ await page.getByRole('button',{name:'Capturar outro frame'}).click();
+ await page.getByText('Nova imagem capturada e hospedada.',{exact:true}).waitFor({timeout:30000});
+ await page.getByLabel('Revisei os nomes').check();
+ await page.getByRole('button',{name:'Gerar meu catálogo'}).click();
+ await page.getByText('Feed local gerado',{exact:true}).waitFor();
+ const feedUrl=await page.getByLabel('Data Feed URL',{exact:true}).inputValue();
+ const feed=await (await page.request.get(feedUrl)).text();
+ assert.match(feed,/<g:image_link>http:\/\/(localhost|127.0.0.1):3000\/api\/local\/media\/.+\.jpg<\/g:image_link>/);
+ assert.match(feed,/<g:price>39.90 BRL<\/g:price>/);
+ assert.match(feed,/a=1&amp;b=2/);
+ const xmlErrors=await page.evaluate(xml=>new DOMParser().parseFromString(xml,'application/xml').querySelectorAll('parsererror').length,feed);assert.equal(xmlErrors,0);
+ const imageUrl=feed.match(/<g:image_link>(.*?)<\/g:image_link>/)[1];assert.equal((await page.request.get(imageUrl)).status(),200);
+ await page.getByRole('button',{name:'Meus catálogos'}).click();
+ await page.getByRole('button',{name:/Teste de integração/}).first().click();
+ await page.getByRole('button',{name:'Capturar outro frame'}).click();
+ await page.getByText('Nova imagem capturada e hospedada.',{exact:true}).waitFor();
+ await page.getByLabel('Nome do produto',{exact:true}).fill('Produto revisado & atualizado');
+ await page.getByLabel('Revisei os nomes').check();await page.getByRole('button',{name:'Atualizar catálogo'}).click();
+ await page.getByText('Catálogo salvo localmente.',{exact:false}).waitFor();assert.equal(await page.getByLabel('Data Feed URL',{exact:true}).inputValue(),feedUrl);
+ const updated=await (await page.request.get(feedUrl)).text();assert.match(updated,/Produto revisado &amp; atualizado/);
+ await page.screenshot({path:'test-results/filled-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});await page.screenshot({path:'test-results/mobile.png',fullPage:true});
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
+ assert.deepEqual(errors,[]);
+ console.log('PASS: video upload, frame extraction/replacement, media hosting, RSS parsing, publication, reopening, stable URL updates, mobile overflow and browser errors.');
+}finally{await browser.close();}
