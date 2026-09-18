@@ -3,12 +3,9 @@ import { authorize, failure } from '@/lib/auth';
 import { read, save } from '@/lib/storage';
 import { catalogSchema, productSchema, buildXml } from '@/lib/catalog';
 import { duplicateDrafts, originalProducts, type DraftStore } from '@/lib/duplicates';
+import { readDraftStore as loadDrafts } from '@/lib/draft-storage';
 export const runtime='nodejs';
 export const maxDuration=60;
-async function loadDrafts(id:string):Promise<DraftStore>{
- try{return JSON.parse((await read(`drafts/${id}.json`)).toString());}
- catch(e){if((e as {code?:string}).code==='ENOENT'||(e as Error).name==='BlobNotFoundError')return {products:[],operations:[]};throw e;}
-}
 async function loadCatalog(id:string){return catalogSchema.parse(JSON.parse((await read(`catalogs/${id}.json`)).toString()));}
 export async function GET(request:Request){try{
  authorize(request);const url=new URL(request.url);const id=z.string().uuid().parse(url.searchParams.get('catalogId'));
