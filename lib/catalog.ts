@@ -17,7 +17,7 @@ export const productSchema = z.object({
   fileName: z.string().max(250),
   product_type: z.string().trim().max(750).optional(),
 });
-export const catalogSchema = z.object({id:z.string().uuid(), name:z.string().trim().min(1).max(100), products:z.array(productSchema).min(1).max(100)});
+export const catalogSchema = z.object({id:z.string().uuid(), name:z.string().trim().min(1).max(100), products:z.array(productSchema).max(100)});
 export type Product = z.infer<typeof productSchema>;
 export type Catalog = z.infer<typeof catalogSchema> & {updatedAt?:string; feedUrl?:string};
 export function escapeXml(value: string) {
@@ -27,7 +27,7 @@ export function buildXml(catalog: Catalog) {
   const valid=catalogSchema.parse(catalog);
   const ids=valid.products.map(p=>p.id);
   if(new Set(ids).size!==ids.length) throw new Error('Cada item precisa ter um ID único.');
-  if(new Set(valid.products.map(p=>p.currency)).size!==1) throw new Error('Todos os itens precisam usar a mesma moeda do catálogo TikTok.');
+  if(new Set(valid.products.map(p=>p.currency)).size>1) throw new Error('Todos os itens precisam usar a mesma moeda do catálogo TikTok.');
   return `<?xml version="1.0" encoding="utf-8"?>\n<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">\n  <channel>\n    <title>${escapeXml(valid.name)}</title>\n${valid.products.map(p=>{
     const fields={id:p.id,title:p.title,description:p.description,availability:p.availability,condition:p.condition,price:`${Number(p.price).toFixed(2)} ${p.currency}`,link:p.link,image_link:p.image_link,video_link:p.video_link,brand:p.brand,product_type:p.product_type||inferProductType(p.title+' '+p.link)};
     return `    <item>\n${Object.entries(fields).map(([k,v])=>`      <g:${k}>${escapeXml(v)}</g:${k}>`).join('\n')}\n    </item>`;

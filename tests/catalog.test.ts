@@ -3,6 +3,11 @@ import assert from 'node:assert/strict';
 import { buildXml, catalogSchema, type Catalog } from '../lib/catalog';
 import { authorize, AuthError } from '../lib/auth';
 import { generateDefaults, inferProductType } from '../lib/generate';
+test('empty named catalogs have valid feeds and can be cleared',()=>{
+ const xml=buildXml({...fixture,name:'Catálogo vazio',products:[]});
+ assert.match(xml,/<title>Catálogo vazio<\/title>/);assert.ok(!xml.includes('<item>'));
+ assert.equal(catalogSchema.safeParse({...fixture,name:' ',products:[]}).success,false);
+});
 test('category is inferred for old feeds and custom categories are XML escaped',()=>{
  assert.match(inferProductType('jogo-panelas'),/Cozinha/);
  assert.match(buildXml({...fixture,products:[{...fixture.products[0],link:'https://example.com/panelas'}]}),/<g:product_type>Casa e jardim &gt;/);
