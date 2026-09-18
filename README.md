@@ -4,12 +4,16 @@ Painel em português para transformar vídeos e links de ofertas em catálogos T
 
 ## Fluxo
 
-1. Informe link da oferta, marca e preço reais. O preço não é inventado.
-2. Envie um ou mais vídeos. Cada criativo gera um item independente, com ID UUID persistente, nome a partir do arquivo, descrição básica e uma sugestão fictícia de marca quando não informada. A geração é local, sem API de IA ou extração da página da oferta.
+1. Informe somente o link da oferta. Em Ajustes opcionais, é possível definir marca, preço e moeda manualmente. Novos catálogos usam ARS por padrão; a moeda precisa corresponder ao catálogo TikTok. Catálogos antigos preservam a moeda salva.
+2. Envie um ou mais vídeos. Cada criativo gera um item independente, com ID UUID persistente, título a partir do endereço da oferta e um complemento aleatório, descrição básica, sugestão fictícia de marca e preço aleatório. Os vídeos do mesmo lote compartilham os dados comerciais. A geração é local, sem API de IA ou extração da página da oferta. Os valores gerados são sugestões, não dados verificados do produto. Ajuste-os quando necessário para corresponder à página de venda; não há garantia de aprovação do TikTok.
 3. O navegador captura um frame automaticamente, gera JPG e envia vídeo + imagem. É possível capturar outro segundo do vídeo. MP4/H.264 é o mais compatível; MOV e WebM dependem do codec suportado no navegador. Fonte mínima 500 × 500 px; a imagem não é ampliada.
-4. Revise os dados individualmente e confirme a revisão. O frame precisa representar adequadamente o produto; a captura não reconhece o conteúdo da cena. Não há garantia de aprovação pelo TikTok.
+4. Os dados ficam disponíveis em Ajustar dados do criativo. O frame precisa representar adequadamente o produto; a captura não reconhece o conteúdo da cena. Não há checkbox obrigatório para publicar.
 5. Publique e copie a URL para **Data Feed URL**. Também é possível baixar o XML.
 6. Em **Meus catálogos**, reabra, edite e publique mantendo a mesma URL e os IDs dos itens existentes. Alterações podem levar pelo menos 60 segundos para refletir no cache do Blob, além da frequência de leitura do TikTok.
+
+Para corrigir um catálogo existente em BRL que deveria usar ARS: abra **Meus catálogos → catálogo → Ajustes do catálogo → Moeda do catálogo TikTok → ARS** e publique novamente. Essa seleção aplica a moeda a todos os itens, sem converter numericamente os preços. O botão Regenerar sugestões gera novos textos, marca e preço, preservando IDs e links das mídias; apenas abrir ou republicar não regenera os dados.
+
+O XML também inclui `product_type`, sugerido por palavras no link/título (por exemplo, panelas → utensílios de cozinha). Quando não há informação suficiente, usa `Produtos > Outros`; a sugestão é editável e não é classificação por IA. Catálogos antigos recebem esse campo ao serem republicados, mesmo sem reenviar os vídeos. O campo livre `product_type` atende à alternativa indicada pelo TikTok; não são inventados IDs da taxonomia Google.
 
 ## Rodar localmente
 
