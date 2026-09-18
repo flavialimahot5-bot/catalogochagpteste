@@ -1,0 +1,30 @@
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch();const page=await browser.newPage({viewport:{width:1440,height:1000}});
+const errors=[];page.on('pageerror',e=>errors.push(e.message));
+try{
+ const origin='http://127.0.0.1:3000';
+ const id=crypto.randomUUID(),name=`Duplicação teste ${Date.now()}`;
+ const fixture={id,name,products:Array.from({length:6},(_,i)=>({id:`item_${crypto.randomUUID()}`,title:`Produto original ${i}`,brand:'Marca teste',description:'Descrição',price:'29.90',currency:'BRL',link:'https://example.com/produto',video_link:`https://example.com/video-${i}.mp4`,image_link:'https://example.com/image.jpg',availability:'in stock',condition:'new',fileName:`video-${i}.mp4`}))};
+ const created=await page.request.post(origin+'/api/catalogs',{data:fixture});assert.equal(created.status(),200);const catalog=await created.json();const xml=await(await page.request.get(catalog.feedUrl)).text();
+ await page.goto(origin);await page.locator('.catalog-open').filter({hasText:name}).click();
+ await page.getByRole('button',{name:'Duplicar',exact:true}).click();
+ const dialog=page.getByRole('dialog',{name:'Duplicar produtos',exact:true});await dialog.waitFor();
+ assert.match(await dialog.innerText(),/6 criativo/);await dialog.getByLabel('Cópias por criativo').fill('1000');assert.match(await dialog.innerText(),/6.000 novos rascunhos/);
+ await dialog.getByRole('button',{name:'Criar rascunhos'}).click();await dialog.waitFor({state:'hidden',timeout:60000});
+ assert.equal(await page.locator('.draft-row').count(),25);assert.match(await page.locator('.draft-pagination').innerText(),/Página 1 de 240/);
+ assert.equal(await(await page.request.get(catalog.feedUrl)).text(),xml);
+ await page.getByRole('button',{name:'Próxima página de rascunhos'}).click();await page.getByText('Página 2 de 240',{exact:true}).waitFor();
+ await page.locator('.draft-row').first().click();const editor=page.getByRole('dialog',{name:'Editar rascunho'});await editor.waitFor();
+ assert.equal(await editor.getByRole('button',{name:'Adicionar ao feed'}).isEnabled(),false);
+ await editor.getByLabel('Nome do produto',{exact:true}).fill('Variante revisada');await editor.getByRole('button',{name:'Salvar rascunho',exact:true}).click();await editor.waitFor({state:'hidden'});
+ assert.equal(await(await page.request.get(catalog.feedUrl)).text(),xml);
+ await page.locator('.draft-row').first().click();assert.equal(await editor.getByLabel('Nome do produto',{exact:true}).inputValue(),'Variante revisada');
+ await editor.getByRole('checkbox').check();await editor.getByRole('button',{name:'Adicionar ao feed',exact:true}).click();await editor.waitFor({state:'hidden'});
+ const updated=await(await page.request.get(catalog.feedUrl)).text();assert.equal((updated.match(/<item>/g)||[]).length,7);assert.match(updated,/Variante revisada/);
+ const summary=await(await page.request.get(origin+`/api/drafts?catalogId=${id}`)).json();assert.equal(summary.total,5999);assert.equal(summary.originalCount,6);
+ await page.reload();await page.locator('.catalog-open').filter({hasText:name}).click();await page.getByRole('button',{name:'Ver rascunhos',exact:true}).click();await page.locator('.draft-row').first().waitFor();
+ assert.equal(await page.locator('.draft-row').count(),25);await page.screenshot({path:'test-results/duplicates-desktop.png',fullPage:true});
+ await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ assert.deepEqual(errors,[]);console.log('PASS: 6000 drafts, 25 per page, unchanged feed, individual editing, reviewed publication, original count, persistence, mobile layout.');
+}finally{await browser.close();}

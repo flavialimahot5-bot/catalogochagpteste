@@ -16,6 +16,7 @@ export const productSchema = z.object({
   condition: z.enum(['new','used','refurbished']),
   fileName: z.string().max(250),
   product_type: z.string().trim().max(750).optional(),
+  source_product_id: z.string().max(100).optional(),
 });
 export const catalogSchema = z.object({id:z.string().uuid(), name:z.string().trim().min(1).max(100), products:z.array(productSchema).max(100)});
 export type Product = z.infer<typeof productSchema>;

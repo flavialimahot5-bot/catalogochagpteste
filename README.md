@@ -25,6 +25,14 @@ O XML também inclui `product_type`, sugerido por palavras no link/título (por 
 
 ## Rodar localmente
 
+### Duplicação de rascunhos
+
+Dentro do catálogo, use **Cópias para edição → Duplicar**. A quantidade é por criativo original: 6 originais × 1.000 criam 6.000 rascunhos, além dos 6 produtos do catálogo. Os originais são contados por URL de vídeo; cópias já revisadas não são contadas novamente. Limites: 1.000 cópias por criativo em cada operação e 10.000 rascunhos armazenados por catálogo.
+
+Cada cópia ganha um ID e mantém marca, preço, link e mídias do original. Os vídeos não são reenviados. Os rascunhos são armazenados em JSON separado (`drafts/`) e não entram no RSS ao duplicar. A lista mostra 25 por página. Clique em um rascunho para editar e salvar; para inserir um produto no feed, confirme sua revisão individual e clique em **Adicionar ao feed**. O limite existente de 100 produtos publicados por catálogo permanece; os milhares de rascunhos ficam separados desse limite. Uma mesma tentativa de duplicação usa um identificador para evitar duplicatas em retries.
+
+Use uma aba/operador por catálogo durante alterações: armazenamento Blob não fornece transações entre arquivos, e alterações simultâneas não têm resolução automática de conflitos. Os rascunhos ficam fora do feed, mas seu JSON usa o mesmo armazenamento público do projeto; não inclua dados privados.
+
 ```sh
 npm install
 npm run dev

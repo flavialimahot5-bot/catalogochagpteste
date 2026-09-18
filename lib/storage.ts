@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { localMode } from './auth';
 const root=path.join(process.cwd(),'.local-data');
 export async function save(key:string, data:Buffer|string, contentType:string, origin:string, overwrite=false) {
-  if(!/^(media|catalogs|feeds)\/[a-zA-Z0-9_.-]+$/.test(key)) throw new Error('Caminho inválido.');
+  if(!/^(media|catalogs|feeds|drafts)\/[a-zA-Z0-9_.-]+$/.test(key)) throw new Error('Caminho inválido.');
   if(localMode()) {
     const target=path.join(root,key); await mkdir(path.dirname(target),{recursive:true});
     const temp=target+'.'+randomUUID()+'.tmp'; await writeFile(temp,data); await rename(temp,target);
